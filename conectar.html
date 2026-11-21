@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Conectar · Escudo Estoico</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+<!--
+  Página de vuelta de Instagram y de Canva. Traen un código de un solo uso, que sin
+  las claves secretas (guardadas solo en GitHub) no sirve para nada. Esta página lo
+  deja en Supabase con la sesión del administrador y el programa lo cambia por la llave.
+-->
+<div class="wrap" style="max-width:640px">
+  <div class="brand">Escudo Estoico · Conexiones</div>
+  <h1 id="titulo">Conectando…</h1>
+  <div class="card" style="margin-top:20px" id="caja"><p>Un momento…</p></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+<script>
+(async () => {
+  const C = window.EE;
+  const db = window.supabase.createClient(C.SUPABASE_URL, C.SUPABASE_KEY, { auth: { flowType: "pkce", persistSession: true } });
+  const caja = document.getElementById("caja"), titulo = document.getElementById("titulo");
+  const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const volver = `<div class="row"><a class="btn primary" href="./">Volver al panel</a></div>`;
+  const q = new URLSearchParams(location.search);
+  const estado = q.get("state") || "";
+  const codigo = (q.get("code") || "").replace(/#_$/, "").trim();
+  history.replaceState(null, "", location.pathname); // saca el código de la barra
+
+  if (q.get("error")) {
+    titulo.textContent = "No se conectó";
+    caja.innerHTML = `<p>La red respondió: ${esc(q.get("error_description") || q.get("error"))}.</p>${volver}`;
+    return;
+  }
+  if (!codigo) {
+    titulo.textContent = "Falta el código";
+    caja.innerHTML = `<p>Esta página se abre sola después de tocar "Permitir" en Instagram o Canva.</p>${volver}`;
+    return;
+  }
+
+  let servicio = null, valor = codigo;
+  if (estado === "instagram") {
+    servicio = "instagram";
+  } else if (estado.startsWith("canva-")) {
+    let guardado = null;
+    try { guardado = JSON.parse(localStorage.getItem("ee:canva") || "null"); } catch (e) {}
+    if (!guardado || guardado.estado !== estado) {
+      titulo.textContent = "No se pudo verificar";
+      caja.innerHTML = `<p>Abrí el panel en este mismo navegador y tocá de nuevo <b>Conectar Canva</b>.</p>${volver}`;
+      return;
+    }
+    servicio = "canva";
+    valor = codigo + "|" + guardado.verificador;
+    try { localStorage.removeItem("ee:canva"); } catch (e) {}
+  } else {
+    titulo.textContent = "Pedido desconocido";
+    caja.innerHTML = `<p>Volvé al panel y conectá desde ahí.</p>${volver}`;
+    return;
+  }
+
+  const { data } = await db.auth.getSession();
+  if (!data.session) {
+    titulo.textContent = "Primero entrá al panel";
+    caja.innerHTML = `<p>Para conectar ${servicio === "canva" ? "Canva" : "Instagram"} tenés que haber entrado al panel con tu cuenta de administrador en este navegador. Entrá y volvé a tocar "Conectar".</p>${volver}`;
+    return;
+  }
+  const r = await db.rpc("ee_dejar_codigo", { p_servicio: servicio, p_codigo: valor });
+  if (r.error || r.data !== true) {
+    titulo.textContent = "No se pudo guardar";
+    caja.innerHTML = `<p>${r.error ? esc(r.error.message) : "Tu cuenta no es administradora."}</p>${volver}`;
+    return;
+  }
+  titulo.textContent = servicio === "canva" ? "✅ Canva dio permiso" : "✅ Instagram dio permiso";
+  caja.innerHTML = `<p>Listo. En 1 o 2 minutos el sistema lo cambia por la llave definitiva. En el panel, en <b>Conexiones</b>, va a aparecer como <b>Conectado</b>.</p>${volver}`;
+})();
+</script>
+</body>
+</html>

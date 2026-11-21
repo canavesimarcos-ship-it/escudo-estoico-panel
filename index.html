@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Escudo Estoico · Panel diario</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <div class="brand">Escudo Estoico · Panel diario</div>
+      <h1 id="title">Cargando…</h1>
+      <div class="meta" id="meta"></div>
+    </div>
+    <div class="nav">
+      <button id="prev" aria-label="Día anterior">←</button>
+      <input type="date" id="pick" aria-label="Elegir fecha">
+      <button id="next" aria-label="Día siguiente">→</button>
+      <button id="today" class="primary">Hoy</button>
+    </div>
+  </header>
+
+  <div class="barra-sesion" id="sesion">Cargando sesión…</div>
+
+  <div class="week" id="week"></div>
+
+  <div class="grid">
+    <section class="card">
+      <h2>Carrusel</h2>
+      <div class="sub">Instagram · sale solo a las 9:00 desde Canva</div>
+      <div class="slides" id="slides"></div>
+      <div class="row" id="canvaRow"></div>
+      <div id="estadoCarrusel"></div>
+      <div class="field">
+        <div class="lab">Caption <button class="copy" data-copy="cap">Copiar</button></div>
+        <div class="box" id="cap"></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Reel</h2>
+      <div class="sub" id="reelSub">8 segundos · IG Reels, TikTok y Shorts</div>
+      <div class="field">
+        <div class="lab">Prompt para Gemini <button class="copy" data-copy="prompt">Copiar</button></div>
+        <div class="box" id="prompt"></div>
+        <div class="note">Para que salga <b>vertical</b>: en Gemini elegí el formato <b>9:16</b> si te aparece la opción, y adjuntá una imagen <b>vertical</b> (la plantilla de reel) — Gemini toma la forma de la imagen que le pasás. Si igual sale horizontal, no pasa nada: el sistema lo recorta al centro (pero se pierden los costados). Los textos no van en Gemini: el sistema se los agrega solo.</div>
+      </div>
+      <div class="field">
+        <div class="lab">Texto 1 · primeros segundos <button class="copy" data-copy="t1">Copiar</button></div>
+        <div class="box big" id="t1"></div>
+      </div>
+      <div class="field">
+        <div class="lab">Texto 2 · cierre <button class="copy" data-copy="t2">Copiar</button></div>
+        <div class="box big" id="t2"></div>
+      </div>
+      <div class="field">
+        <div class="lab">Música sugerida</div>
+        <div class="box" id="mus"></div>
+      </div>
+      <div class="field">
+        <div class="lab">Caption del reel <button class="copy" data-copy="rcap">Copiar</button></div>
+        <div class="box" id="rcap"></div>
+      </div>
+      <div class="row">
+        <a class="btn" href="https://www.canva.com/design/DAHbLRHX1oU/edit" target="_blank" rel="noopener">Abrir plantilla de reel en Canva ↗</a>
+      </div>
+      <div id="reelProg"></div>
+    </section>
+  </div>
+
+  <div class="section-title">TikTok y Shorts (a mano por ahora)</div>
+  <div class="checks" id="checks"></div>
+
+  <div id="zonaCrecimiento"></div>
+
+  <div id="zonaConexiones"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+<script src="panel.js"></script>
+</body>
+</html>
